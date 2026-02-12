@@ -67,7 +67,7 @@ export const logIn = async (req: Request, res: Response) => {
       throw new Error("Invalid Credentials!");
     }
 
-    const isPasswordValid = savedUser.validatePassword(password);
+    const isPasswordValid = await savedUser.validatePassword(password);
     if (!isPasswordValid) {
       throw new Error("Invalid Credentials");
     }

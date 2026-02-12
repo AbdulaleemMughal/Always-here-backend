@@ -56,9 +56,7 @@ UserSchema.methods.validatePassword = async function (
   const user = this;
   const hashedPassword = user.password;
 
-  const isPasswordCorrect = bcrypt.compare(passwordInputByUser, hashedPassword);
-
-  return isPasswordCorrect;
+  return await bcrypt.compare(passwordInputByUser, hashedPassword);
 };
 
 const User =
