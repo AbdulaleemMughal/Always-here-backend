@@ -38,21 +38,19 @@ export const addTheme = async (req: Request, res: Response) => {
   }
 };
 
-export const getTheme = async (req: Request, res: Response) => {
-    try {
-        
-        const themes = await Theme.find({});
+export const getTheme = async (_req: Request, res: Response) => {
+  try {
+    const themes = await Theme.find({});
 
-        res.status(200).json({
-            success: true,
-            message: 'Theme getted successfully',
-            themes
-        })
-
-    } catch (err: any) {
-        res.status(400).json({
+    res.status(200).json({
+      success: true,
+      message: "Theme getted successfully",
+      themes,
+    });
+  } catch (err: any) {
+    res.status(400).json({
       success: false,
       message: err.message || "Error while creating user.",
     });
-    }
-}
+  }
+};
