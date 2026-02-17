@@ -27,7 +27,7 @@ export const signUp = async (req: Request, res: Response) => {
     const user = new User({
       name,
       email,
-      password: hashedPassword, // ✅ fixed spelling
+      password: hashedPassword, 
     });
 
     await user.save();
