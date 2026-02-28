@@ -7,6 +7,7 @@ import userRouter from "./router/user.router";
 import faqRouter from "./router/faq.router";
 import themeRouter from "./router/theme.router";
 import memorialRouter from "./router/memorial.router";
+import videoRouter from "./router/video.router";
 
 dotenv.config();
 const PORT = process.env.PORT;
@@ -27,6 +28,7 @@ app.use('/auth', userRouter);
 app.use('/api', faqRouter);
 app.use('/api', themeRouter);
 app.use('/api', memorialRouter);
+app.use('/api', videoRouter);
 
 connectDatabase().then(() => {
   app.listen(PORT, () => {

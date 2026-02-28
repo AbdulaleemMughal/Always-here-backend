@@ -38,32 +38,41 @@ const UserDetailSchema = new Schema<UserDetailType>({
   },
 });
 
-const MemorialSchema = new Schema<MemorialType>({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
+const MemorialSchema = new Schema<MemorialType>(
+  {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+    accentColor: {
+      type: String,
+    },
+    backgroundColor: {
+      type: String,
+      default: "#ffffff",
+    },
+    textColor: {
+      type: String,
+      default: "#000000",
+    },
+    fontWeigth: {
+      type: String,
+      enum: ["bold", "light"],
+      default: "light",
+    },
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
+    userDetail: {
+      type: UserDetailSchema,
+      default: () => ({}),
+    },
   },
-  accentColor: {
-    type: String,
+  {
+    timestamps: true,
   },
-  backgroundColor: {
-    type: String,
-    default: "#ffffff",
-  },
-  textColor: {
-    type: String,
-    default: "#000000",
-  },
-  fontWeigth: {
-    type: String,
-    enum: ["bold", "light"],
-    default: "light",
-  },
-  userDetail: {
-    type: UserDetailSchema,
-    default: () => ({}),
-  },
-});
+);
 
 const Memorial = mongoose.model<MemorialType>("Memorial", MemorialSchema);
 
