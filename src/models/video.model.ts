@@ -17,7 +17,10 @@ const VideoSchema = new Schema<VideoType>(
     },
     videos: [
       {
-        type: String,
+        url: {
+          type: String,
+          required: true,
+        },
       },
     ],
   },
