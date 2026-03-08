@@ -7,5 +7,5 @@ export type VideoType = {
   videos?: {
     id?: mongoose.Types.ObjectId;
     url: string;
-  };
+  }[];
 };

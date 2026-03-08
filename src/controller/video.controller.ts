@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Videos from "../models/video.model";
 import { VideoType } from "../@types/video.type";
 import { UpdateQuery } from "mongoose";
+import { isYoutubeLinkIsValid } from "../utils/youtubeLink.validation";
 
 export const updateVideo = async (req: Request, res: Response) => {
   try {
@@ -19,6 +20,12 @@ export const updateVideo = async (req: Request, res: Response) => {
     }
 
     if (videoUrl) {
+      if (!isYoutubeLinkIsValid(videoUrl)) {
+        return res.status(404).json({
+          success: false,
+          message: "Enter the Valid Youtube Link.",
+        });
+      }
       updateObject.$addToSet = { videos: { url: videoUrl } };
     }
 
@@ -33,6 +40,7 @@ export const updateVideo = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
+      message: "Video Section Updated Successfully.",
       data: updatedVideo,
     });
   } catch (err: any) {
@@ -54,7 +62,7 @@ export const getVideos = async (req: Request, res: Response) => {
       });
     }
 
-    const videoData = await Videos.find({ memorialId });
+    const videoData = await Videos.findOne({ memorialId });
 
     res.status(200).json({
       success: true,
@@ -90,7 +98,7 @@ export const deleteVideo = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      messgae: "Video deleted successfully",
+      message: "Video deleted successfully",
       data: updatedVideoSection,
     });
   } catch (err: any) {

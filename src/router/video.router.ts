@@ -5,7 +5,7 @@ import { userAuth } from '../middlewares/userAuth.middleware';
 const videoRouter = express.Router();  
 
 videoRouter.patch('/update-video/:memorialId', userAuth, updateVideo);
-videoRouter.get('/get-video/:memorialId', userAuth, getVideos);
+videoRouter.get('/get-videos/:memorialId', userAuth, getVideos);
 videoRouter.delete('/delete-video/:memorialId/:videoId', userAuth, deleteVideo)
 
 export default videoRouter;
