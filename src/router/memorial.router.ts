@@ -17,3 +17,4 @@ memorialRouter.delete("/memorial/:memorialId", userAuth, deleteMemorial);
 memorialRouter.patch("/memorial/:memorialId", userAuth, updateMemorial);
 
 export default memorialRouter;
+

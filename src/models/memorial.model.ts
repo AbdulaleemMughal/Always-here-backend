@@ -55,7 +55,7 @@ const MemorialSchema = new Schema<MemorialType>(
       type: String,
       default: "#000000",
     },
-    fontWeigth: {
+    fontWeight: {
       type: String,
       enum: ["bold", "light"],
       default: "light",

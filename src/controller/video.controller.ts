@@ -62,7 +62,21 @@ export const getVideos = async (req: Request, res: Response) => {
       });
     }
 
-    const videoData = await Videos.findOne({ memorialId });
+    const videoData = await Videos.findOneAndUpdate(
+      { memorialId },
+      {
+        $setOnInsert: {
+          memorialId,
+          heading: "Videos",
+          isActive: true,
+          videos: [],
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+      },
+    );
 
     res.status(200).json({
       success: true,
@@ -108,5 +122,3 @@ export const deleteVideo = async (req: Request, res: Response) => {
     });
   }
 };
-
-// https://youtu.be/Oa5AzBDSjls?si=bOFF4TrEiPMwact3
