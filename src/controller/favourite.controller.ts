@@ -70,8 +70,6 @@ export const updateFavourite = async (req: Request, res: Response) => {
       },
     );
 
-    console.log(updateFields);
-
     return res.status(200).json({
       success: true,
       message: "Favourite item updated successfully",
@@ -124,19 +122,6 @@ export const getFavourites = async (req: Request, res: Response) => {
     });
   }
 };
-
-// export const updateFavourite = async (req: Request, res: Response) => {
-//   try {
-
-//     const { memorialId, favouriteId } = req.params;
-
-//   } catch (err: any) {
-//     res.status(400).json({
-//       success: false,
-//       message: err.message || "Error while deleting Favourite section.",
-//     });
-//   }
-// }
 
 export const deleteFavourite = async (req: Request, res: Response) => {
   try {

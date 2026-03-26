@@ -68,6 +68,14 @@ const MemorialSchema = new Schema<MemorialType>(
       type: UserDetailSchema,
       default: () => ({}),
     },
+    videos: {
+      type: Number,
+      ref: "Videos"
+    },
+    timeline: {
+      type: Number,
+      ref: "Videos"
+    },
   },
   {
     timestamps: true,

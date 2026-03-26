@@ -1,5 +1,7 @@
 import type { Response, Request } from "express";
 import Memorial from "../models/memorial.model";
+import Videos from "../models/video.model";
+import Timeline from "../models/timeline.model";
 
 // when the user select from the theme this api runs
 export const addMemorial = async (req: Request, res: Response) => {
@@ -50,10 +52,22 @@ export const getMemorialById = async (req: Request, res: Response) => {
       });
     }
 
+    const videoSection = await Videos.findOne({ memorialId });
+    const totalVideos = videoSection?.videos?.length || 0;
+
+    const timelineSection = await Timeline.findOne({ memorialId });
+    const totalTimelines = timelineSection?.timeline?.length || 0;
+
+    const memorialWithVideos = {
+      ...memorial.toObject(),
+      totalVideos,
+      totalTimelines,
+    };
+
     res.status(200).json({
       success: true,
       message: "Memorial fetched successfully.",
-      data: memorial,
+      data: memorialWithVideos,
     });
   } catch (err: any) {
     res.status(400).json({

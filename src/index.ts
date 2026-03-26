@@ -9,6 +9,8 @@ import themeRouter from "./router/theme.router";
 import memorialRouter from "./router/memorial.router";
 import videoRouter from "./router/video.router";
 import favouriteRouter from "./router/favourite.router";
+import ObituaryRouter from "./router/obituary.router";
+import timelineRouter from "./router/timeline.router";
 
 dotenv.config();
 const PORT = process.env.PORT;
@@ -30,7 +32,9 @@ app.use('/api', faqRouter);
 app.use('/api', themeRouter);
 app.use('/api', memorialRouter);
 app.use('/api', videoRouter);
-app.use('/api', favouriteRouter)
+app.use('/api', favouriteRouter);
+app.use('/api', ObituaryRouter);
+app.use('/api', timelineRouter);
 
 connectDatabase().then(() => {
   app.listen(PORT, () => {

@@ -6,6 +6,7 @@ const VideoSchema = new Schema<VideoType>(
     memorialId: {
       type: Schema.Types.ObjectId,
       ref: "Memorial",
+      required: true,
     },
     heading: {
       type: String,
