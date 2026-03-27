@@ -42,95 +42,121 @@ export const getTimeline = async (req: Request, res: Response) => {
   }
 };
 
+export const createTimelineItem = async (req: Request, res: Response) => {
+  try {
+    const { memorialId } = req.params;
+
+    const defaultTimelineItem = {
+      headline: "Headline",
+      description: "Description",
+      year: "",
+      month: "",
+      day: "",
+    };
+
+    const updatedTimeline = await Timeline.findOneAndUpdate(
+      { memorialId },
+      {
+        $push: { timeline: defaultTimelineItem },
+      },
+      {
+        new: true,
+        upsert: true,
+      },
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Timeline Updated Successfully.",
+      data: updatedTimeline,
+    });
+  } catch (err: any) {
+    return res.status(400).json({
+      success: false,
+      message: err.message || "Error while creating timeline item.",
+    });
+  }
+};
+
 export const updateTimeline = async (req: Request, res: Response) => {
   try {
     const { memorialId, timelineId } = req.params;
     const { heading, isActive, headline, description, year, month, day } =
       req.body;
 
-    if (!timelineId) {
-      const updatedObject: UpdateQuery<TimelineType> = {};
+    const updateFields: UpdateQuery<TimelineType> = {};
+    let hasArrayUpdates = false;
 
-      if (heading !== undefined) {
-        updatedObject.heading = heading;
+    /* Update section fields */
+    if (heading !== undefined) updateFields.heading = heading;
+    if (isActive !== undefined) updateFields.isActive = isActive;
+
+    /* Update timeline item fields */
+    if (timelineId) {
+      if (headline !== undefined) {
+        updateFields["timeline.$[elem].headline"] = headline;
+        hasArrayUpdates = true;
       }
 
-      if (isActive !== undefined) {
-        updatedObject.isActive = isActive;
+      if (description !== undefined) {
+        updateFields["timeline.$[elem].description"] = description;
+        hasArrayUpdates = true;
       }
 
-      const timelineItem: TimelinePayload = {};
-
-      if (headline !== undefined) timelineItem.headline = headline;
-      if (description !== undefined) timelineItem.description = description;
-      if (year !== undefined) timelineItem.year = year;
-      if (month !== undefined) timelineItem.month = month;
-      if (day !== undefined) timelineItem.day = day;
-
-      if (Object.keys(timelineItem).length > 0) {
-        updatedObject.$push = {
-          timeline: timelineItem,
-        };
+      if (year !== undefined) {
+        updateFields["timeline.$[elem].year"] = year;
+        hasArrayUpdates = true;
       }
 
-      const updatedTimeline = await Timeline.findOneAndUpdate(
-        { memorialId },
-        updatedObject,
-        {
-          new: true,
-          upsert: true,
-        },
-      );
+      if (month !== undefined) {
+        updateFields["timeline.$[elem].month"] = month;
+        hasArrayUpdates = true;
+      }
 
-      return res.status(200).json({
-        success: true,
-        message: "Timeline Section Updated Successfully.",
-        data: updatedTimeline,
-      });
+      if (day !== undefined) {
+        updateFields["timeline.$[elem].day"] = day;
+        hasArrayUpdates = true;
+      }
     }
 
-    const timelineDoc = await Timeline.findOne({
-      memorialId,
-      "timeline._id": timelineId,
-    });
-
-    if (!timelineDoc) {
-      return res.status(404).json({
+    // Check if there are any fields to update
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).json({
         success: false,
-        message: "Timeline item not found",
+        message: "No fields provided for update",
       });
     }
 
-    const updateFields: any = {};
+    // Build the update options
+    const updateOptions: any = { new: true };
 
-    if (headline !== undefined)
-      updateFields["timeline.$[elem].headline"] = headline;
-    if (description !== undefined)
-      updateFields["timeline.$[elem].description"] = description;
-    if (year !== undefined) updateFields["timeline.$[elem].year"] = year;
-    if (month !== undefined) updateFields["timeline.$[elem].month"] = month;
-    if (day !== undefined) updateFields["timeline.$[elem].day"] = day;
+    // Only add arrayFilters if we're actually updating array elements and timelineId exists
+    if (timelineId && hasArrayUpdates) {
+      updateOptions.arrayFilters = [{ "elem._id": timelineId }];
+    }
 
     const updatedTimeline = await Timeline.findOneAndUpdate(
       { memorialId },
-      {
-        $set: updateFields,
-      },
-      {
-        new: true,
-        arrayFilters: [{ "elem._id": timelineId }],
-      },
+      { $set: updateFields },
+      updateOptions,
     );
 
-    res.status(200).json({
+    if (!updatedTimeline) {
+      return res.status(404).json({
+        success: false,
+        message: "Timeline not found",
+      });
+    }
+
+    return res.status(200).json({
       success: true,
-      message: "Timeline Section Updated Successfully.",
+      message: "Timeline updated successfully",
       data: updatedTimeline,
     });
   } catch (err: any) {
-    res.status(400).json({
+    return res.status(400).json({
       success: false,
-      message: err.message || "Error while getting timeline.",
+      message: err.message || "Error while updating timeline.",
     });
   }
 };
