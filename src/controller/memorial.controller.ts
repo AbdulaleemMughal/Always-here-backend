@@ -1,7 +1,18 @@
 import type { Response, Request } from "express";
+import type { UploadedFile } from "express-fileupload";
+import { v2 as cloudinary } from "cloudinary";
 import Memorial from "../models/memorial.model";
 import Videos from "../models/video.model";
 import Timeline from "../models/timeline.model";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // when the user select from the theme this api runs
 export const addMemorial = async (req: Request, res: Response) => {
@@ -132,30 +143,97 @@ export const updateMemorial = async (req: Request, res: Response) => {
   try {
     const user = req.user;
     const { memorialId } = req.params;
-    const updateData = req.body;
+    console.log("Files received:", req.files);
 
-    const updatedMemorial = await Memorial.findOneAndUpdate(
-      { userId: user?._id, _id: memorialId },
-      updateData,
-      { new: true },
-    );
+    const files = req.files as {
+      coverImage?: UploadedFile | UploadedFile[];
+      profileImage?: UploadedFile | UploadedFile[];
+    };
 
-    if (!updatedMemorial) {
+    if (!files || Object.keys(files).length === 0) {
+      console.log("No files uploaded");
+    }
+
+    const updateFields: any = { ...req.body };
+
+    const memorial = await Memorial.findOne({
+      _id: memorialId,
+      userId: user?._id,
+    });
+
+    if (!memorial) {
       return res.status(404).json({
         success: false,
-        message: "Memorial not found.",
+        message: "Memorial not found",
       });
     }
 
-    res.status(200).json({
+    const profileFile = Array.isArray(files?.profileImage)
+      ? files.profileImage[0]
+      : files?.profileImage;
+
+    const coverFile = Array.isArray(files?.coverImage)
+      ? files.coverImage[0]
+      : files?.coverImage;
+
+    if (coverFile) {
+      try {
+        //deleting the previous image from the cloudinary to avoid the unnecessary storage
+        if (memorial.coverImagePublicId) {
+          await cloudinary.uploader.destroy(memorial.coverImagePublicId);
+        }
+
+        const upload = await cloudinary.uploader.upload(
+          coverFile.tempFilePath,
+          {
+            folder: "memorial_images/covers",
+          },
+        );
+        updateFields["userDetail.coverImage"] = upload.secure_url;
+        updateFields["coverImagePublicId"] = upload.public_id;
+      } catch (cloudinaryError) {
+        console.error("Cloudinary upload error:", cloudinaryError);
+        throw cloudinaryError;
+      }
+    }
+
+    if (profileFile) {
+      try {
+        if (memorial.profileImagePublicId) {
+          await cloudinary.uploader.destroy(memorial.profileImagePublicId);
+        }
+
+        const upload = await cloudinary.uploader.upload(
+          profileFile.tempFilePath,
+          {
+            folder: "memorial_images/profiles",
+          },
+        );
+        updateFields["userDetail.profileImage"] = upload.secure_url;
+        updateFields["profileImagePublicId"] = upload.public_id;
+      } catch (cloudinaryError) {
+        console.error("Cloudinary upload error:", cloudinaryError);
+        throw cloudinaryError;
+      }
+    }
+
+    const updatedMemorial = await Memorial.findByIdAndUpdate(
+      memorialId,
+      updateFields,
+      { new: true },
+    );
+
+    return res.status(200).json({
       success: true,
-      message: "Memorial updated successfully.",
+      message: "Memorial updated successfully",
       data: updatedMemorial,
     });
-  } catch (err: any) {
-    res.status(400).json({
+  } catch (error: any) {
+    console.error(error);
+
+    res.status(500).json({
       success: false,
-      message: err.message || "Error while updating memorial.",
+      message: error.message,
     });
   }
 };

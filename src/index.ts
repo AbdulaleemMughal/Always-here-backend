@@ -2,6 +2,7 @@ import express from "express";
 import { connectDatabase } from "./lib/db";
 import dotenv from "dotenv";
 import cors from "cors";
+import fileUpload from "express-fileupload";
 import cookieParser from "cookie-parser";
 import userRouter from "./router/user.router";
 import faqRouter from "./router/faq.router";
@@ -26,15 +27,21 @@ app.use(
     credentials: true,
   }),
 );
+// for uploading files to the server
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir: '/tmp/',
+  limits: { fileSize: 5 * 1024 * 1024 }, 
+}));
 
-app.use('/auth', userRouter);
-app.use('/api', faqRouter);
-app.use('/api', themeRouter);
-app.use('/api', memorialRouter);
-app.use('/api', videoRouter);
-app.use('/api', favouriteRouter);
-app.use('/api', ObituaryRouter);
-app.use('/api', timelineRouter);
+app.use("/auth", userRouter);
+app.use("/api", faqRouter);
+app.use("/api", themeRouter);
+app.use("/api", memorialRouter);
+app.use("/api", videoRouter);
+app.use("/api", favouriteRouter);
+app.use("/api", ObituaryRouter);
+app.use("/api", timelineRouter);
 
 connectDatabase().then(() => {
   app.listen(PORT, () => {

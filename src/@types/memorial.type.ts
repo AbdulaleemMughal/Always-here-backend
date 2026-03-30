@@ -21,4 +21,6 @@ export type MemorialType = {
   userDetail: UserDetailType;
   videos: number;
   timeline: number;
+  coverImagePublicId?: string;
+  profileImagePublicId?: string;
 };

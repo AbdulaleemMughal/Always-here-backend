@@ -70,11 +70,17 @@ const MemorialSchema = new Schema<MemorialType>(
     },
     videos: {
       type: Number,
-      ref: "Videos"
+      ref: "Videos",
     },
     timeline: {
       type: Number,
-      ref: "Videos"
+      ref: "Videos",
+    },
+    coverImagePublicId: {
+      type: String,
+    },
+    profileImagePublicId: {
+      type: String,
     },
   },
   {
