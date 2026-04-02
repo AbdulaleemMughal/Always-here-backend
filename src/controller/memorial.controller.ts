@@ -143,7 +143,6 @@ export const updateMemorial = async (req: Request, res: Response) => {
   try {
     const user = req.user;
     const { memorialId } = req.params;
-    console.log("Files received:", req.files);
 
     const files = req.files as {
       coverImage?: UploadedFile | UploadedFile[];
