@@ -13,41 +13,36 @@ export const getFamilyTree = async (req: Request, res: Response) => {
       });
     }
 
-    const familyTreeData = await FamilyTree.findOneAndUpdate(
-      { memorialId },
-      {
-        $setOnInsert: {
-          memorialId,
-          heading: "Family Tree",
-          isActive: true,
-          treeData: {
-            children: [],
-            f_grandFather: null,
-            f_grandMother: null,
-            father: null,
-            siblings: [],
-            m_grandFather: null,
-            m_grandMother: null,
-            mother: null,
-            wifes: [],
-          },
+    let familyTreeData = await FamilyTree.findOne({ memorialId });
+
+    if (!familyTreeData) {
+      familyTreeData = await FamilyTree.create({
+        memorialId,
+        heading: "Family Tree",
+        isActive: true,
+        treeData: {
+          children: [],
+          f_grandFather: null,
+          f_grandMother: null,
+          father: null,
+          siblings: [],
+          m_grandFather: null,
+          m_grandMother: null,
+          mother: null,
+          wifes: [],
         },
-      },
-      {
-        new: true,
-        upsert: true,
-      },
-    );
+      });
+    }
 
     res.status(200).json({
       success: true,
-      message: "Family Tree Getted Successfully",
+      message: "Family Tree Retrieved Successfully",
       data: familyTreeData,
     });
   } catch (err: any) {
     res.status(400).json({
       success: false,
-      message: err.message || "Error while updating video section.",
+      message: err.message || "Error while fetching family tree.",
     });
   }
 };

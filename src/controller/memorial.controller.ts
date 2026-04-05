@@ -149,9 +149,6 @@ export const updateMemorial = async (req: Request, res: Response) => {
       profileImage?: UploadedFile | UploadedFile[];
     };
 
-    if (!files || Object.keys(files).length === 0) {
-      console.log("No files uploaded");
-    }
 
     const updateFields: any = { ...req.body };
 

@@ -1,5 +1,17 @@
 import mongoose, { Schema } from "mongoose";
-import { FamilyTreeType } from "../@types/familyTree.type";
+import { BranchType, FamilyTreeType } from "../@types/familyTree.type";
+
+const PersonSchema = new Schema<BranchType>({
+  name: {
+    type: String,
+    default: "Full Name",
+  },
+  img: {
+    type: String,
+    default:
+      "https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg",
+  },
+});
 
 const FamilyTreeSchema = new Schema<FamilyTreeType>(
   {
@@ -17,111 +29,39 @@ const FamilyTreeSchema = new Schema<FamilyTreeType>(
       default: true,
     },
     treeData: {
-      children: [
-        {
-          name: {
-            type: String,
-            default: "Full Name",
-          },
-          img: {
-            type: String,
-            default:
-              "https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg",
-          },
-        },
-      ],
+      children: [PersonSchema],
       f_grandFather: {
-        name: {
-          type: String,
-          default: "Full Name",
-        },
-        img: {
-          type: String,
-          default:
-            "https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg",
-        },
+        type: PersonSchema,
+        default: null,
+        required: false,
       },
       f_grandMother: {
-        name: {
-          type: String,
-          default: "Full Name",
-        },
-        img: {
-          type: String,
-          default:
-            "https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg",
-        },
+        type: PersonSchema,
+        default: null,
+        required: false,
       },
       father: {
-        name: {
-          type: String,
-          default: "Full Name",
-        },
-        img: {
-          type: String,
-          default:
-            "https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg",
-        },
+        type: PersonSchema,
+        default: null,
+        required: false,
       },
-      siblings: [
-        {
-          name: {
-            type: String,
-            default: "Full Name",
-          },
-          img: {
-            type: String,
-            default:
-              "https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg",
-          },
-        },
-      ],
+      siblings: [PersonSchema],
       m_grandFather: {
-        name: {
-          type: String,
-          default: "Full Name",
-        },
-        img: {
-          type: String,
-          default:
-            "https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg",
-        },
+        type: PersonSchema,
+        default: null,
+        required: false,
       },
       m_grandMother: {
-        name: {
-          type: String,
-          default: "Full Name",
-        },
-        img: {
-          type: String,
-          default:
-            "https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg",
-        },
+        type: PersonSchema,
+        default: null,
+        required: false,
       },
       mother: {
-        name: {
-          type: String,
-          default: "Full Name",
-        },
-        img: {
-          type: String,
-          default:
-            "https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg",
-        },
+        type: PersonSchema,
+        default: null,
+        required: false,
       },
-      wifes: [
-        {
-          name: {
-            type: String,
-            default: "Full Name",
-          },
-          img: {
-            type: String,
-            default:
-              "https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg",
-          },
-        },
-      ],
+      wifes: [PersonSchema],
     },
   },
   {
