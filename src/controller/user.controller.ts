@@ -27,7 +27,7 @@ export const signUp = async (req: Request, res: Response) => {
     const user = new User({
       name,
       email,
-      password: hashedPassword, 
+      password: hashedPassword,
     });
 
     await user.save();
@@ -130,6 +130,70 @@ export const logout = async (req: Request, res: Response) => {
     res.status(400).json({
       success: false,
       message: err.message || "Error while Logging out",
+    });
+  }
+};
+
+export const updateProfile = async (req: Request, res: Response) => {
+  try {
+    const { oldPassword, newPassword, name, email } = req.body;
+
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Update email
+    if (email && email !== user.email) {
+      const existingEmail = await User.findOne({
+        email,
+        _id: { $ne: user._id },
+      });
+
+      if (existingEmail) {
+        throw new Error("Email already exists");
+      }
+
+      user.email = email;
+    }
+
+    // Update name
+    if (name) {
+      user.name = name;
+    }
+
+    // Update password
+    if (oldPassword || newPassword) {
+      if (!oldPassword || !newPassword) {
+        throw new Error("Both old password and new password are required");
+      }
+
+      const isPasswordValid = await user.validatePassword(oldPassword);
+
+      if (!isPasswordValid) {
+        throw new Error("Old password is incorrect");
+      }
+
+      user.password = await bcrypt.hash(newPassword, 10);
+    }
+
+    await user.save();
+
+    const updatedUser = user.toObject();
+    delete updatedUser.password;
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: updatedUser,
+    });
+  } catch (err: any) {
+    res.status(400).json({
+      success: false,
+      message: err.message || "Error updating profile",
     });
   }
 };

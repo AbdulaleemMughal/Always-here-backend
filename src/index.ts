@@ -13,6 +13,8 @@ import favouriteRouter from "./router/favourite.router";
 import ObituaryRouter from "./router/obituary.router";
 import timelineRouter from "./router/timeline.router";
 import familyTreeRouter from "./router/familyTree.router";
+import memoryRouter from "./router/memoryWall.router";
+import ContactRouter from "./router/contact.router";
 
 dotenv.config();
 const PORT = process.env.PORT;
@@ -29,11 +31,13 @@ app.use(
   }),
 );
 // for uploading files to the server
-app.use(fileUpload({
-  useTempFiles: true,
-  tempFileDir: '/tmp/',
-  limits: { fileSize: 5 * 1024 * 1024 }, 
-}));
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+    limits: { fileSize: 5 * 1024 * 1024 },
+  }),
+);
 
 app.use("/auth", userRouter);
 app.use("/api", faqRouter);
@@ -44,6 +48,8 @@ app.use("/api", favouriteRouter);
 app.use("/api", ObituaryRouter);
 app.use("/api", timelineRouter);
 app.use("/api", familyTreeRouter);
+app.use("/api", memoryRouter);
+app.use("/api", ContactRouter);
 
 connectDatabase().then(() => {
   app.listen(PORT, () => {

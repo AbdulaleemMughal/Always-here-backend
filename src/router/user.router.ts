@@ -4,6 +4,7 @@ import {
   logIn,
   logout,
   signUp,
+  updateProfile,
 } from "../controller/user.controller";
 import { userAuth } from "../middlewares/userAuth.middleware";
 
@@ -13,5 +14,6 @@ userRouter.post("/signUp", signUp);
 userRouter.post("/logIn", logIn);
 userRouter.post("/logOut", logout);
 userRouter.get("/getUser", userAuth, getLoggedInUser);
+userRouter.post("/update-profile", userAuth, updateProfile);
 
 export default userRouter;
